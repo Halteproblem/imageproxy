@@ -151,14 +151,43 @@ func readAndCheckImage(r io.Reader, contentLength int) (*imageData, error) {
 }
 
 func requestImage(imageURL string) (*http.Response, error) {
+	cfg := &tls.Config{
+        MinVersion:               tls.VersionTLS12,
+        CurvePreferences:         []tls.CurveID{tls.CurveP521, tls.CurveP384, tls.CurveP256},
+        PreferServerCipherSuites: true,
+        CipherSuites: []uint16{
+			tls.TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256,
+			tls.TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256,
+			tls.TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384,
+			tls.TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384,
+			tls.TLS_ECDHE_ECDSA_WITH_CHACHA20_POLY1305,
+			tls.TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305,
+			tls.TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA,
+			tls.TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA,
+			tls.TLS_RSA_WITH_AES_128_GCM_SHA256,
+			tls.TLS_RSA_WITH_AES_256_GCM_SHA384,
+			tls.TLS_RSA_WITH_AES_128_CBC_SHA,
+			tls.TLS_RSA_WITH_AES_256_CBC_SHA,
+        },
+	}
+	tr := &http.Transport{TLSClientConfig: cfg}
+	client := &http.Client{Transport: tr}
 	req, err := http.NewRequest("GET", imageURL, nil)
 	if err != nil {
 		return nil, newError(404, err.Error(), msgSourceImageIsUnreachable).SetUnexpected(conf.ReportDownloadingErrors)
 	}
 
-	req.Header.Set("User-Agent", conf.UserAgent)
+	req.Header.Add("upgrade-insecure-requests", "1")
+	req.Header.Add("User-Agent", `Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.27 Safari/537.36`)
+	req.Header.Add("accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9")
+	req.Header.Add("sec-fetch-site", "none")
+	req.Header.Add("sec-fetch-mode", "navigate")
+	req.Header.Add("sec-fetch-user", "?1")
+	req.Header.Add("sec-fetch-dest", "document")
+	req.Header.Add("accept-encoding", "gzip, deflate, br")
+	req.Header.Add("accept-language", "de-DE,de;q=0.9,en-US;q=0.8,en;q=0.7")
 
-	res, err := downloadClient.Do(req)
+	res, err := client.Do(req)
 	if err != nil {
 		return res, newError(404, err.Error(), msgSourceImageIsUnreachable).SetUnexpected(conf.ReportDownloadingErrors)
 	}
