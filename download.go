@@ -10,7 +10,7 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/imgproxy/imgproxy/v2/imagemeta"
+	"github.com/halteproblem/notify-image-proxy/v2/imagemeta"
 )
 
 var (
