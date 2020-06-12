@@ -12,7 +12,7 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/imgproxy/imgproxy/v2/structdiff"
+	"github.com/Halteproblem/notify-image-proxy/v2/structdiff"
 )
 
 type urlOption struct {

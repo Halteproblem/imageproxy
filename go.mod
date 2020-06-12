@@ -1,4 +1,4 @@
-module github.com/imgproxy/imgproxy/v2
+module github.com/Halteproblem/notify-image-proxy/v2
 
 go 1.11
 

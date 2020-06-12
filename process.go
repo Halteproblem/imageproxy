@@ -7,7 +7,7 @@ import (
 	"math"
 	"runtime"
 
-	"github.com/imgproxy/imgproxy/v2/imagemeta"
+	"github.com/Halteproblem/notify-image-proxy/v2/imagemeta"
 )
 
 const msgSmartCropNotSupported = "Smart crop is not supported by used version of libvips"
